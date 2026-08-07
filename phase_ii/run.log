@@ -1,0 +1,79 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Using standard dataset split (1000 train, 150 val, 50 test). Use '--full' to use the 10,000 scenario split.
+Using device: cpu
+
+[Step 1] Generating Phase II datasets (scenarios + reports)...
+Generated 1000 train, 150 val, and 50 test report pairs.
+
+[Step 2] Reconstructing training and validation graphs using Rule-Based Extractor...
+Reconstruction of train & val graphs completed in 96.04 seconds.
+
+[Step 3] Loading frozen Phase I GNN ('gnn_model.pth') and MLP ('mlp_model.pth') checkpoints...
+
+[Step 4] Reconstructing and evaluating test reports using Rule-Based and NLP (NER/QA) extractors...
+Running NLP Extractor (NER + QA) comparison on the 10 smallest test reports...
+[NLPExtractor] Loading dslim/bert-base-NER on cpu...
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 6827.65it/s]
+[transformers] [1mBertForTokenClassification LOAD REPORT[0m from: dslim/bert-base-NER
+Key                      | Status     |  | 
+-------------------------+------------+--+-
+bert.pooler.dense.bias   | UNEXPECTED |  | 
+bert.pooler.dense.weight | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[NLPExtractor] Loading distilbert-base-cased-distilled-squad QA model...
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 13060.38it/s]
+[NLPExtractor] Loading Cross-Encoder Relation Classifier (cross-encoder/nli-deberta-v3-small)...
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 12801.87it/s]
+[NLPExtractor] NLP models loaded successfully.
+Extraction of NLP Extractor subset completed in 12.43 seconds.
+
+=== EXTRACTOR ACCURACY COMPARISON (On NLP Subset) ===
+Rule-Based:    Outcome Acc=59.50%, Edge Prec=100.00%, Edge Rec=85.59%, Edge F1=90.47%
+NLP Extractor: Outcome Acc=100.00%, Edge Prec=87.28%, Edge Rec=92.91%, Edge F1=89.90%
+
+=== EXTRACTION ACCURACY BY COMPLEXITY (On NLP Subset) ===
+Level A:
+  Rule-Based    -> Outcome Acc=100.00%, Edge F1=100.00%
+  NLP Extractor -> Outcome Acc=100.00%, Edge F1=100.00%
+Level B:
+  Rule-Based    -> Outcome Acc=100.00%, Edge F1=44.44%
+  NLP Extractor -> Outcome Acc=100.00%, Edge F1=71.43%
+Level C:
+  Rule-Based    -> Outcome Acc=42.14%, Edge F1=94.32%
+  NLP Extractor -> Outcome Acc=100.00%, Edge F1=89.65%
+
+[Step 5] Evaluating Downstream quality control models and Phase I baseline bots...
+
+--- Running Evaluation on Full Rule-Based Reconstructed Test Set (50 graphs) ---
+Generating predictions on 50 test scenarios...
+
+--- Running Evaluation on Small NLP Reconstructed Test Set (10 graphs) ---
+Generating predictions on 10 test scenarios...
+
+--- Running Evaluation on Small Rule-Based Reconstructed Test Set (10 graphs) ---
+Generating predictions on 10 test scenarios...
+
+=== DOWNSTREAM QUALITY CONTROL INFERENCE ON FULL RULE-BASED RECONSTRUCTED GRAPHS ===
+| Model | Quality MAE | Quality MSE | F1-Score | Precision | Recall | Accuracy | ROC-AUC | PR-AUC |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GNN (Proposed) | 0.0415 | 0.003510 | 0.2582 | 0.2038 | 0.3522 | 0.7913 | 0.6645 | 0.2289 |
+| MLP Baseline | 0.0481 | 0.004231 | 0.2251 | 0.1298 | 0.8457 | 0.3997 | 0.6380 | 0.1539 |
+| Baseline A (Naive Freq) | 0.0644 | 0.008437 | 0.2252 | 0.1402 | 0.5717 | 0.5943 | 0.5942 | 0.2494 |
+| Baseline B (Failure-Only Freq) | 0.0306 | 0.003492 | 0.2266 | 0.1530 | 0.4370 | 0.6924 | 0.5812 | 0.1372 |
+| Baseline C (Constraint Elimination) | 0.0682 | 0.008268 | 0.2025 | 0.1237 | 0.5565 | 0.5479 | 0.5517 | 0.3630 |
+| Baseline D (Bayesian Inference) | 0.0332 | 0.003273 | 0.2431 | 0.2014 | 0.3065 | 0.8032 | 0.6339 | 0.1642 |
+
+=== DOWNSTREAM QUALITY CONTROL INFERENCE ON SMALL NLP RECONSTRUCTED GRAPHS ===
+| Model | Quality MAE | Quality MSE | F1-Score | Precision | Recall | Accuracy | ROC-AUC | PR-AUC |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| GNN (Proposed) | 0.0386 | 0.003152 | 0.3571 | 0.3125 | 0.4167 | 0.7778 | 0.7391 | 0.4625 |
+| MLP Baseline | 0.0414 | 0.003101 | 0.3396 | 0.2195 | 0.7500 | 0.5679 | 0.6920 | 0.3006 |
+| Baseline A (Naive Freq) | 0.0612 | 0.006633 | 0.3509 | 0.2222 | 0.8333 | 0.5432 | 0.7107 | 0.4234 |
+| Baseline B (Failure-Only Freq) | 0.0705 | 0.009057 | 0.3333 | 0.2083 | 0.8333 | 0.5062 | 0.6449 | 0.3735 |
+| Baseline C (Constraint Elimination) | 0.0438 | 0.004792 | 0.3448 | 0.2941 | 0.4167 | 0.7654 | 0.6214 | 0.3986 |
+| Baseline D (Bayesian Inference) | 0.0367 | 0.003333 | 0.2759 | 0.2353 | 0.3333 | 0.7407 | 0.7005 | 0.2512 |
+Generated and saved evaluation plots to /Users/arunghosh/Documents/Antigravity/Mystery/phase_ii/plots
+
+Phase II Pipeline completed in 247.44 seconds!
