@@ -12,7 +12,9 @@ However, I got stuck back at square one: why should people care? What is inheren
 This project converts a transcript of a social deduction game into an analysis of which inputs to a company's supply chain are responsible for downstream inspection failures. I divided the project into three phases:
 
 **Phase 1:** Use a GNN to solve direct root cause inference problems from graph inputs. 
+
 **Phase 2:** Use NLP models to extract a dictionary of relevant information from a company report to then construct a graph to feed the GNN.
+
 **Phase 3:** Prompt LLMs (ChatGPT, Claude, and Gemini) to summarize social deduction game transcripts as company reports to feed the NLP models.
 
 Together, they make a pipeline that can solve a social deduction mystery by modeling it as a supply chain root cause inference problem.
