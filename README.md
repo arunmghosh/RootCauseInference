@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Can AI Solve Mysteries? 
 I developed an LLM-NLP-GNN pipeline that can solve a social deduction game given a transcript of the play phase (before the roles are revealed). This demonstrates an ability to solve root-cause-inference problems, with applications in fields like supply chain management.
 
@@ -77,6 +78,80 @@ The NLP models were open-source pre-trained models downloaded from Hugging Face,
 The LLMs (ChatGPT, Claude & Gemini) were evaluated based on the downstream metrics from their social deduction oral transcript summaries. They were each given the same instructions and ten transcripts. 
 
 ## Installation & Usage
+=======
+# Root Cause Inference in Supply Chain Networks
+
+An end-to-end framework for inferring factory quality failures within bipartite supply chain networks using Graph Neural Networks (GNNs), Multi-Stage NLP Extraction, and Interactive Game-Theoretic Simulation.
+
+---
+
+## 🌟 Project Overview
+
+This repository addresses the problem of identifying defective supply nodes (factories) given noisy end-node inspection outcomes (stores) and supply volume topologies. The system operates across three distinct phases:
+
+1. **Phase I — Bipartite Graph Neural Networks & Inference Baselines**:
+   - Models bipartite network topology using message-passing Graph Neural Networks (`BipartiteGNN`).
+   - Compares performance against MLPs and classical statistical baselines (Naive Frequency, Failure-Only Frequency, Constraint Elimination, Bayesian Inference).
+2. **Phase II — NLP Text Extraction & Downstream Inference**:
+   - Extracts structured 4-component schemas (`entities`, `events`, `outcomes`, `connections`) from unstructured natural language logistics reports.
+   - Integrates transformer models (`BERT NER`, `DistilBERT QA`, `DeBERTa-v3 Cross-Encoder`) to handle historical updates, coreference, and cancelled shipments.
+   - Feeds reconstructed graphs into Phase I inference models.
+3. **Phase III — Interactive Game Simulation & LLM Benchmarking**:
+   - Simulates sequential audit decision-making under sample and budget constraints.
+   - Benchmarks LLM reasoning agents (ChatGPT, Claude, Gemini) and human players in interactive root-cause isolation games.
+
+---
+
+## 📁 Repository Architecture
+
+```
+Mystery/
+├── phase_i/                       # Phase I: GNN & Baseline Inference
+│   ├── data_generator.py          # Synthetic bipartite graph scenario generator
+│   ├── gnn_model.py               # BipartiteGNN & FactoryMLP architectures
+│   ├── train.py                   # Training routines for GNN and MLP
+│   ├── baselines.py               # Statistical & heuristic baselines
+│   ├── evaluate.py                # Evaluation metrics (MAE, MSE, ROC-AUC, PR-AUC, F1)
+│   └── run_pipeline.py            # Phase I master execution pipeline
+│
+├── phase_ii/                      # Phase II: NLP Extraction & Downstream Pipeline
+│   ├── extractor.py               # RuleBasedExtractor & NLPExtractor classes
+│   ├── run_pipeline_phase_ii.py   # Phase II master execution pipeline
+│   ├── phase_ii_extractor_comparison.md # Head-to-head extraction metrics
+│   └── phase_ii_metrics_nlp_small.md     # Downstream inference performance
+│
+├── phase_iii/                     # Phase III: Game Simulator & LLM Benchmarks
+│   ├── game_simulator.py          # Interactive CLI game simulator
+│   ├── single_scenario_simulator.py # Single scenario game execution engine
+│   ├── multi_scenario_simulator.py  # Multi-scenario evaluation framework
+│   └── multi_scenario_evaluation_results.md # LLM benchmark evaluation results
+│
+└── workshop/                      # Experiments & Ablation Studies
+    ├── run_edge_dropout_experiment.py  # Edge missingness robustness experiments
+    ├── run_solution_c_experiment.py    # Cross-encoder NLI validation tests
+    └── interactive_evaluator.py        # Interactive evaluation CLI tool
+```
+
+---
+
+## 🛠️ Installation
+
+### Prerequisites
+* **Python 3.8+**
+* Hardware Acceleration: CUDA GPU or Apple Silicon (MPS) supported; CPU execution supported as fallback.
+
+### Install Dependencies
+Install all required packages via `pip`:
+
+```bash
+pip install torch transformers numpy scipy scikit-learn matplotlib pandas
+```
+
+---
+
+## 🚀 Execution & Usage Guide
+
+>>>>>>> 5ef6f67 (bugfixing)
 ### 1. Phase I — GNN Training & Baseline Evaluation
 Generate synthetic bipartite scenarios, train the `BipartiteGNN` and `FactoryMLP` models, and evaluate against statistical baselines:
 
@@ -135,3 +210,58 @@ python workshop/run_solution_c_experiment.py
 ```
 
 ---
+<<<<<<< HEAD
+=======
+
+## 💻 Python API Usage Examples
+
+### A. Extracting Graphs from Text (`phase_ii.extractor`)
+```python
+from phase_ii.extractor import NLPExtractor
+
+extractor = NLPExtractor(device="cpu") # Options: "cpu", "cuda", "mps"
+
+report_text = """
+Logistics update: Seattle Onyx Factory originally planned to ship 50 units 
+to Portland Jade Store, but that delivery was cancelled. Instead, Seattle Onyx Factory 
+actually shipped 41 units to Portland Jade Store. 
+Quality inspection for Portland Jade Store passed with a 99.0% success rate.
+"""
+
+data = extractor.extract(
+    report_text=report_text,
+    store_names=["Portland Jade Store"],
+    factory_names=["Seattle Onyx Factory"]
+)
+
+print(data['connections'])
+# [{'entity': 'Seattle Onyx Factory', 'event': 'Portland Jade Store', 'units': 41}]
+```
+
+### B. Inferring Factory Quality with Phase I GNN (`phase_i.gnn_model`)
+```python
+import torch
+from phase_i.gnn_model import BipartiteGNN
+
+# Initialize GNN Architecture
+model = BipartiteGNN(fac_in_dim=3, store_in_dim=3, edge_in_dim=2, hidden_dim=64, num_layers=3)
+model.load_state_dict(torch.load("phase_i/gnn_model.pth", map_location="cpu"))
+model.eval()
+
+# Input tensors for a graph scenario
+# fac_x: [num_factories, 3], store_x: [num_stores, 3], edge_index: [2, num_edges], edge_attr: [num_edges, 2]
+with torch.no_grad():
+    pred_qualities, pred_failures = model(fac_x, store_x, edge_index, edge_attr)
+```
+
+---
+
+## 📊 Summary of Results
+
+| Phase | Metric | GNN Model / NLP Extractor | Baseline / Rule-Based |
+| --- | --- | --- | --- |
+| **Phase I** | Quality MAE | **0.0354** | 0.0580 (Naive Freq) |
+| **Phase I** | Failure Classification F1 | **0.4286** | 0.3548 (Naive Freq) |
+| **Phase II** | Text Extraction Outcome Acc | **100.00%** | 59.50% (Rule-Based) |
+| **Phase II** | Text Extraction Edge F1 | **89.90%** | 90.47% (Rule-Based) |
+>>>>>>> 5ef6f67 (bugfixing)

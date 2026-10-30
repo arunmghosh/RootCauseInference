@@ -7,17 +7,23 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score, mean_absolute_error
 
-# Add phase_i directory to sys.path to allow importing phase_i modules
+# Add project root and module directories to sys.path
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PHASE_I_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', 'phase_i'))
+BASE_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+PHASE_I_DIR = os.path.join(BASE_DIR, 'phase_i')
+
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 if PHASE_I_DIR not in sys.path:
     sys.path.insert(0, PHASE_I_DIR)
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
 
-from data_generator import generate_phase_ii_dataset
+from phase_i.data_generator import generate_phase_ii_dataset
 from extractor import RuleBasedExtractor, NLPExtractor, reconstruct_scenario, compare_graphs
-from train import train_gnn, train_mlp
-from evaluate import evaluate_all, plot_and_save_results
-from gnn_model import BipartiteGNN, FactoryMLP
+from phase_i.train import train_gnn, train_mlp
+from phase_i.evaluate import evaluate_all, plot_and_save_results
+from phase_i.gnn_model import BipartiteGNN, FactoryMLP
 
 def print_separator(char='-', length=80):
     print(char * length)
